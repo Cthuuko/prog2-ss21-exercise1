@@ -3,6 +3,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Class and Test-class written by Miguel Arcilla
+ * https://github.com/Cthuuko/prog2-ss21-exercise1
+ */
 public class PasswordValidatorTest {
 
     /**
