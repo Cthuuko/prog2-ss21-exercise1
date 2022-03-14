@@ -19,6 +19,14 @@ public class PasswordValidatorTest {
     }
 
     /**
+     * Testcase for a password that has been set as null
+     */
+    @Test
+    public void checkPasswordNullPointerError() {
+        assertFalse(PasswordValidator.checkPassword(null));
+    }
+
+    /**
      * Testcase for a password that doesn't meet one of the requirements: Password should be between 8 and 25 characters
      */
     @Test

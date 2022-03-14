@@ -16,7 +16,7 @@ public final class PasswordValidator {
      * @return True if password is valid - False otherwise
      */
     public static boolean checkPassword(String password) {
-        if (password.length() <= MIN_LENGTH || password.length() >= MAX_LENGTH) {
+        if (password == null || password.length() <= MIN_LENGTH || password.length() >= MAX_LENGTH) {
             return false;
         }
 
