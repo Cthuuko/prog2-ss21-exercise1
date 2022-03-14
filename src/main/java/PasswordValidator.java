@@ -1,6 +1,3 @@
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,36 +13,75 @@ public final class PasswordValidator {
      * @return True if password is valid - False otherwise
      */
     public static boolean checkPassword(String password) {
-        if (password == null || password.length() <= MIN_LENGTH || password.length() >= MAX_LENGTH) {
+        if (password == null) {
             return false;
         }
 
-        Set<String> regexPatterns = new HashSet<>(List.of("[A-Z]+", "[a-z]+", "\\d+", "[()#$?!%/@]+"));
-
-        for (String regex : regexPatterns) {
-            if (!isValidPattern(password, regex)) {
-                return false;
-            }
-        }
-
-        return password.replaceAll("[A-Za-z\\d()#$?!%/@]", "").length() == 0;
+        return checkLength(password) && checkLowerCase(password) && checkCapitalCase(password) &&
+                checkNumbers(password) && checkSpecialSymbols(password) &&
+                checkProgressiveAndConsecutiveNumbers(password);
     }
 
     /**
-     * Matches the given regex with the given password,
-     * if the given regex is matching digits, it will also check for progressive as well as consecutive numbers
+     * Checks if the password is within the boundary
      *
-     * @param password The password to
-     * @param regex    The regex to match to
-     * @return True if the regex pattern has been found or for digits:
-     * the numbers are not progressive (more than twice, e.g. 123) nor same consecutive (more than thrice, e.g. 1111) - False otherwise
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
      */
-    private static boolean isValidPattern(String password, String regex) {
-        Matcher m = Pattern.compile(regex).matcher(password);
-        boolean patternFound = m.find(0);
+    public static boolean checkLength(String password) {
+        return password.length() >= MIN_LENGTH && password.length() <= MAX_LENGTH;
+    }
 
-        // Check for the extension requirements: progressive (123) and consecutive (111) numbers
-        if (regex.equals("\\d+") && patternFound) {
+    /**
+     * Checks if the password contains at least one small letter
+     *
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
+     */
+    public static boolean checkLowerCase(String password) {
+        return getMatcher(password, "[a-z]+").find(0);
+    }
+
+    /**
+     * Checks if the password contains at least one capital letter
+     *
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
+     */
+    public static boolean checkCapitalCase(String password) {
+        return getMatcher(password, "[A-Z]+").find(0);
+    }
+
+    /**
+     * Checks if the password contains at least one number
+     *
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
+     */
+    public static boolean checkNumbers(String password) {
+        return getMatcher(password, "\\d+").find(0);
+    }
+
+    /**
+     * Checks if the password contains at least one of the following symbols: ()#$?!%/@
+     * and doesn't contain any other special symbol
+     *
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
+     */
+    public static boolean checkSpecialSymbols(String password) {
+        return getMatcher(password, "[()#$?!%/@]+").find(0) && password.replaceAll("[A-Za-z\\d()#$?!%/@]", "").length() == 0;
+    }
+
+    /**
+     * Checks if the password doesn't contain a sequence of progressive numbers or consecutive sequence of the same number
+     *
+     * @param password The password to validate
+     * @return True if password passes the validation - False otherwise
+     */
+    public static boolean checkProgressiveAndConsecutiveNumbers(String password) {
+        Matcher m = getMatcher(password, "\\d+");
+        if (m.find(0)) {
             char[] match = m.group().toCharArray();
             StringBuilder consecutiveNumValidator = new StringBuilder();
             if (match.length > 2) {
@@ -53,14 +89,21 @@ public final class PasswordValidator {
                     consecutiveNumValidator.append(Character.getNumericValue(match[i + 1]) - Character.getNumericValue(match[i]));
                 }
 
-                /*
-                 Gets the difference between the numbers,
-                 if there are more than 2 ones or 3 zeroes then one of the extension requirements has not been met.
-                 */
                 return !Pattern.compile("1{2,}").matcher(consecutiveNumValidator.toString()).find(0) &&
                         !Pattern.compile("0{3,}").matcher(consecutiveNumValidator.toString()).find(0);
             }
         }
-        return patternFound;
+        return true;
+    }
+
+    /**
+     * Prepares the Regex Matcher for given regex and string to check
+     *
+     * @param password The password to check
+     * @param regex    The regex to be applied
+     * @return The Matcher object to find matches for given regex.
+     */
+    private static Matcher getMatcher(String password, String regex) {
+        return Pattern.compile(regex).matcher(password);
     }
 }

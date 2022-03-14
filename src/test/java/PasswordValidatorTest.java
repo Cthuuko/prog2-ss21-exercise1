@@ -32,10 +32,10 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordLengthError() {
         String password = "aB1!";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkLength(password));
 
         password = "Abcdeabcdeabcdeabcdeabcd1!";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkLength(password));
     }
 
     /**
@@ -44,10 +44,10 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordCaseError() {
         String password = "thispasswordshouldwork124())";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkCapitalCase(password));
 
         password = "THISPASSWORDSHOULDWORK124())";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkLowerCase(password));
     }
 
     /**
@@ -56,7 +56,7 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordNumbersMissingError() {
         String password = "ThisPassShouldWorkkkk())";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkNumbers(password));
     }
 
     /**
@@ -65,7 +65,7 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordSpecialCharMissingError() {
         String password = "ThisPassShouldWork124fff";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkSpecialSymbols(password));
     }
 
     /**
@@ -74,7 +74,7 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordInvalidSpecialCharError() {
         String password = "ThisPassShouldWork124()§";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkSpecialSymbols(password));
     }
 
     // Extensions
@@ -86,9 +86,9 @@ public class PasswordValidatorTest {
     @Test
     public void checkPasswordProgressiveAndConsecutiveNumbersError() {
         String password = "ThisPassShouldWork123()";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkProgressiveAndConsecutiveNumbers(password));
 
         password = "ThisPassShouldWork1111()";
-        assertFalse(PasswordValidator.checkPassword(password));
+        assertFalse(PasswordValidator.checkProgressiveAndConsecutiveNumbers(password));
     }
 }
